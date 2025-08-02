@@ -6,7 +6,19 @@ import { initialCart } from "../cart/cartSlice";
 
 export const loginWithEmail = createAsyncThunk(
   "user/loginWithEmail",
-  async ({ email, password }, { rejectWithValue }) => {}
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/user/login", { email, password });
+      // 성공 -> 로그인 페이지에서 처리
+      // 토큰 저장 장소: 1) 로컬 스토리지 2) 세션 스토리지
+      sessionStorage.setItem("token", response.data.token);
+      api.defaults.headers["authorization"] = "Bearer " + response.data.token;
+      return response.data;
+    } catch (error) {
+      // 실패 -> 실패 시 생긴 에러값을 reducer에 저장
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 export const loginWithGoogle = createAsyncThunk(
@@ -20,12 +32,45 @@ export const registerUser = createAsyncThunk(
   async (
     { email, name, password, navigate },
     { dispatch, rejectWithValue }
-  ) => {}
+  ) => {
+    try {
+      const response = await api.post("/user", { email, name, password });
+      // 성공
+      // 1. 성공 토스트 메시지 보여주기
+      dispatch(
+        showToastMessage({
+          message: "회원가입에 성공했습니다.",
+          status: "success",
+        })
+      );
+      // 2. 로그인 페이지로 리다이렉트
+      navigate("/login");
+      return response.data.data;
+    } catch (error) {
+      // 실패
+      // 1. 실패 토스트 메시지 보여주기
+      dispatch(
+        showToastMessage({
+          message: "회원가입에 실패했습니다.",
+          status: "error",
+        })
+      );
+      // 2. 에러값 저장하기
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 export const loginWithToken = createAsyncThunk(
   "user/loginWithToken",
-  async (_, { rejectWithValue }) => {}
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("/user/me");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 const userSlice = createSlice({
@@ -43,7 +88,35 @@ const userSlice = createSlice({
       state.registrationError = null;
     },
   },
-  extraReducers: (builder) => {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+        state.registrationError = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.registrationError = action.payload;
+      })
+      .addCase(loginWithEmail.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginWithEmail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.loginError = null;
+      })
+      .addCase(loginWithEmail.rejected, (state, action) => {
+        state.loading = false;
+        state.loginError = action.payload;
+      })
+      .addCase(loginWithToken.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+      });
+  },
 });
 export const { clearErrors } = userSlice.actions;
 export default userSlice.reducer;
