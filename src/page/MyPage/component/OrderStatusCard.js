@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col, Badge } from "react-bootstrap";
 import { badgeBg } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
@@ -8,11 +7,7 @@ const OrderStatusCard = ({ orderItem }) => {
     <div>
       <Row className="status-card">
         <Col xs={2}>
-          <img
-            src={orderItem.items[0]?.productId?.image}
-            alt={orderItem.items[0]?.productId?.image}
-            height={96}
-          />
+          <img src={orderItem.items[0]?.productId?.image} alt="" height={96} />
         </Col>
         <Col xs={8} className="order-info">
           <div>

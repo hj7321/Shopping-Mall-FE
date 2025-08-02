@@ -1,7 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getCartQty } from "../cart/cartSlice";
-import api from "../../utils/api";
-import { showToastMessage } from "../common/uiSlice";
 
 // Define initial state
 const initialState = {

@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Form, Modal, Button, Row, Col, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CloudinaryUploadWidget from "../../../utils/CloudinaryUploadWidget";
 import { CATEGORY, STATUS, SIZE } from "../../../constants/product.constants";
 import "../style/adminProduct.style.css";
-import {
-  clearError,
-  createProduct,
-  editProduct,
-} from "../../../features/product/productSlice";
+import { clearError } from "../../../features/product/productSlice";
 
 const InitialFormData = {
   name: "",
@@ -34,7 +30,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
 
   useEffect(() => {
     if (success) setShowDialog(false);
-  }, [success]);
+  }, [success, setShowDialog]);
 
   useEffect(() => {
     if (error || !success) {
@@ -54,7 +50,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
         setStock([]);
       }
     }
-  }, [showDialog]);
+  }, [showDialog, dispatch, error, mode, selectedProduct, success]);
 
   const handleClose = () => {
     //모든걸 초기화시키고;
@@ -70,6 +66,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) };
     }, {});
+    console.log(totalStock);
     if (mode === "new") {
       //새 상품 만들기
     } else {

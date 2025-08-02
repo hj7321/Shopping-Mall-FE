@@ -1,12 +1,6 @@
-import React from "react";
-import { Button } from "react-bootstrap";
-import { useNavigate } from "react-router";
-import { useLocation } from "react-router-dom";
-import { currencyFormat } from "../../../utils/number";
-
 const OrderReceipt = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  // const location = useLocation();
+  // const navigate = useNavigate();
 
   return (
     <div className="receipt-container">

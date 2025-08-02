@@ -1,33 +1,28 @@
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
-import OrderReceipt from "./component/OrderReceipt";
-import PaymentForm from "./component/PaymentForm";
+import { useSelector } from "react-redux";
 import "./style/paymentPage.style.css";
-import { cc_expires_format } from "../../utils/number";
-import { createOrder } from "../../features/order/orderSlice";
 
 const PaymentPage = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { orderNum } = useSelector((state) => state.order);
-  const [cardValue, setCardValue] = useState({
-    cvc: "",
-    expiry: "",
-    focus: "",
-    name: "",
-    number: "",
-  });
-  const navigate = useNavigate();
-  const [firstLoading, setFirstLoading] = useState(true);
-  const [shipInfo, setShipInfo] = useState({
-    firstName: "",
-    lastName: "",
-    contact: "",
-    address: "",
-    city: "",
-    zip: "",
-  });
+  // const [cardValue, setCardValue] = useState({
+  //   cvc: "",
+  //   expiry: "",
+  //   focus: "",
+  //   name: "",
+  //   number: "",
+  // });
+  // const navigate = useNavigate();
+  // const [firstLoading, setFirstLoading] = useState(true);
+  // const [shipInfo, setShipInfo] = useState({
+  //   firstName: "",
+  //   lastName: "",
+  //   contact: "",
+  //   address: "",
+  //   city: "",
+  //   zip: "",
+  // });
 
   useEffect(() => {
     // 오더번호를 받으면 어디로 갈까?
@@ -42,13 +37,13 @@ const PaymentPage = () => {
     //shipInfo에 값 넣어주기
   };
 
-  const handlePaymentInfoChange = (event) => {
-    //카드정보 넣어주기
-  };
+  // const handlePaymentInfoChange = (event) => {
+  //   //카드정보 넣어주기
+  // };
 
-  const handleInputFocus = (e) => {
-    setCardValue({ ...cardValue, focus: e.target.name });
-  };
+  // const handleInputFocus = (e) => {
+  //   setCardValue({ ...cardValue, focus: e.target.name });
+  // };
   // if (cartList?.length === 0) {
   //   navigate("/cart");
   // }// 주문할 아이템이 없다면 주문하기로 안넘어가게 막음

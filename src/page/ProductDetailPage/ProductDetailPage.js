@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Container, Row, Col, Button, Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ColorRing } from "react-loader-spinner";
 import { currencyFormat } from "../../utils/number";
 import "./style/productDetail.style.css";
 import { getProductDetail } from "../../features/product/productSlice";
-import { addToCart } from "../../features/cart/cartSlice";
 
 const ProductDetail = () => {
   const dispatch = useDispatch();
@@ -14,8 +13,10 @@ const ProductDetail = () => {
   const [size, setSize] = useState("");
   const { id } = useParams();
   const [sizeError, setSizeError] = useState(false);
-  const user = useSelector((state) => state.user.user);
-  const navigate = useNavigate();
+  console.log(setSize);
+  console.log(setSizeError);
+  // const user = useSelector((state) => state.user.user);
+  // const navigate = useNavigate();
 
   const addItemToCart = () => {
     //사이즈를 아직 선택안했다면 에러
@@ -46,7 +47,7 @@ const ProductDetail = () => {
     <Container className="product-detail-card">
       <Row>
         <Col sm={6}>
-          <img src={selectedProduct.image} className="w-100" alt="image" />
+          <img src={selectedProduct.image} className="w-100" alt="" />
         </Col>
         <Col className="product-info-area" sm={6}>
           <div className="product-info">{selectedProduct.name}</div>

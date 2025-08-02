@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams, useNavigate } from "react-router-dom";
+// import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import SearchBox from "../../common/component/SearchBox";
 import NewItemDialog from "./component/NewItemDialog";
 import ProductTable from "./component/ProductTable";
-import {
-  getProductList,
-  deleteProduct,
-  setSelectedProduct,
-} from "../../features/product/productSlice";
 
 const AdminProductPage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [query] = useSearchParams();
-  const dispatch = useDispatch();
-  const { productList, totalPageNum } = useSelector((state) => state.product);
+  // const dispatch = useDispatch();
+  // const { productList, totalPageNum } = useSelector((state) => state.product);
   const [showDialog, setShowDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get("page") || 1,
