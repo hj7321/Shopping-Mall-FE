@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import CloudinaryUploadWidget from "../../../utils/CloudinaryUploadWidget";
 import { CATEGORY, STATUS, SIZE } from "../../../constants/product.constants";
 import "../style/adminProduct.style.css";
-import { clearError } from "../../../features/product/productSlice";
+import {
+  clearError,
+  createProduct,
+} from "../../../features/product/productSlice";
 
 const InitialFormData = {
   name: "",
@@ -68,7 +71,8 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     }, {});
     console.log(totalStock);
     if (mode === "new") {
-      //새 상품 만들기
+      // 새 상품 만들기
+      dispatch(createProduct({ ...formData, stock: totalStock }));
     } else {
       // 상품 수정하기
     }
