@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { Col, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "../common/component/Sidebar";
@@ -11,16 +11,24 @@ import { getCartQty } from "../features/cart/cartSlice";
 const AppLayout = ({ children }) => {
   const location = useLocation();
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
+
   useEffect(() => {
-    dispatch(loginWithToken());
-  }, [dispatch]);
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      dispatch(loginWithToken());
+    }
+  }, [dispatch, location.pathname]);
+
   useEffect(() => {
     if (user) {
       dispatch(getCartQty());
+      if (location.pathname === "/login") {
+        navigate("/");
+      }
     }
-  }, [user, dispatch]);
+  }, [user, dispatch, location.pathname, navigate]);
   return (
     <div>
       <ToastMessage />
@@ -35,7 +43,7 @@ const AppLayout = ({ children }) => {
         </Row>
       ) : (
         <>
-          <Navbar user={user} />
+          <Navbar />
           {children}
         </>
       )}
