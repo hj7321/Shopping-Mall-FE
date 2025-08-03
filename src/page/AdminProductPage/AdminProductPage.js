@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { Container, Button } from "react-bootstrap";
-// import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import SearchBox from "../../common/component/SearchBox";
 import NewItemDialog from "./component/NewItemDialog";
 import ProductTable from "./component/ProductTable";
+import { getProductList } from "../../features/product/productSlice";
 
 const AdminProductPage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [query] = useSearchParams();
-  // const dispatch = useDispatch();
-  // const { productList, totalPageNum } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
+  const { productList, totalPageNum } = useSelector((state) => state.product);
+  console.log(totalPageNum);
   const [showDialog, setShowDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get("page") || 1,
     name: query.get("name") || "",
-  }); //검색 조건들을 저장하는 객체
+  }); // 검색 조건들을 저장하는 객체
 
   const [mode, setMode] = useState("new");
 
@@ -31,14 +33,23 @@ const AdminProductPage = () => {
     "",
   ];
 
-  //상품리스트 가져오기 (url쿼리 맞춰서)
+  // 상품리스트 가져오기 (url쿼리 맞춰서)
+  useEffect(() => {
+    dispatch(getProductList({ ...searchQuery }));
+  }, [query, dispatch, searchQuery]);
 
   useEffect(() => {
-    //검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서  상품리스트 가져오기)
-  }, [searchQuery]);
+    // 검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서 상품리스트 가져오기)
+    if (searchQuery.name === "") {
+      delete searchQuery.name;
+    }
+    const params = new URLSearchParams(searchQuery);
+    const query = params.toString();
+    navigate("?" + query);
+  }, [searchQuery, navigate]);
 
   const deleteItem = (id) => {
-    //아이템 삭제하기
+    // 아이템 삭제하기
   };
 
   const openEditForm = (product) => {
@@ -57,6 +68,8 @@ const AdminProductPage = () => {
     //  쿼리에 페이지값 바꿔주기
   };
 
+  // SearchBox에서 검색어 읽어오기 -> 엔터를 치면, searchQuery 객체가 업데이트됨: { name: 스트레이트 팬츠 }
+  // searchQuery 객체 안 아이템 기준으로 url을 새로 생성해서 호출: &name=스트레이트+팬츠 -> url 쿼리 읽어오기 -> url 쿼리 기준으로 백엔드에 검색 조건과 함께 호출
   return (
     <div className="locate-center">
       <Container>
@@ -74,7 +87,7 @@ const AdminProductPage = () => {
 
         <ProductTable
           header={tableHeader}
-          data=""
+          data={productList}
           deleteItem={deleteItem}
           openEditForm={openEditForm}
         />
