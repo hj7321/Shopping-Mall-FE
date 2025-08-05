@@ -6,14 +6,18 @@ import ReactPaginate from "react-paginate";
 import SearchBox from "../../common/component/SearchBox";
 import NewItemDialog from "./component/NewItemDialog";
 import ProductTable from "./component/ProductTable";
-import { getProductList } from "../../features/product/productSlice";
+import {
+  deleteProduct,
+  getProductList,
+  setSelectedProduct,
+} from "../../features/product/productSlice";
 
 const AdminProductPage = () => {
   const navigate = useNavigate();
   const [query] = useSearchParams();
   const dispatch = useDispatch();
-  const { productList, totalPageNum } = useSelector((state) => state.product);
-  console.log(totalPageNum);
+  const productList = useSelector((state) => state.product.productList);
+  const totalPageNum = useSelector((state) => state.product.totalPageNum);
   const [showDialog, setShowDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState({
     page: query.get("page") || 1,
@@ -33,6 +37,32 @@ const AdminProductPage = () => {
     "",
   ];
 
+  const deleteItem = (id) => {
+    // 아이템 삭제하기
+    dispatch(deleteProduct(id));
+    setSearchQuery({ page: 1, name: "" });
+  };
+
+  const openEditForm = (product) => {
+    // edit모드로 설정하고
+    setMode("edit");
+    // 아이템 수정다이얼로그 열어주기
+    dispatch(setSelectedProduct(product));
+    setShowDialog(true);
+  };
+
+  const handleClickNewItem = () => {
+    // new 모드로 설정하고
+    setMode("new");
+    // 다이얼로그 열어주기
+    setShowDialog(true);
+  };
+
+  const handlePageClick = ({ selected }) => {
+    //  쿼리에 페이지값 바꿔주기
+    setSearchQuery((prev) => ({ ...prev, page: selected + 1 }));
+  };
+
   // 상품리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
     dispatch(getProductList({ ...searchQuery }));
@@ -47,26 +77,6 @@ const AdminProductPage = () => {
     const query = params.toString();
     navigate("?" + query);
   }, [searchQuery, navigate]);
-
-  const deleteItem = (id) => {
-    // 아이템 삭제하기
-  };
-
-  const openEditForm = (product) => {
-    // edit모드로 설정하고
-    // 아이템 수정다이얼로그 열어주기
-  };
-
-  const handleClickNewItem = () => {
-    // new 모드로 설정하고
-    setMode("new");
-    // 다이얼로그 열어주기
-    setShowDialog(true);
-  };
-
-  const handlePageClick = ({ selected }) => {
-    //  쿼리에 페이지값 바꿔주기
-  };
 
   // SearchBox에서 검색어 읽어오기 -> 엔터를 치면, searchQuery 객체가 업데이트됨: { name: 스트레이트 팬츠 }
   // searchQuery 객체 안 아이템 기준으로 url을 새로 생성해서 호출: &name=스트레이트+팬츠 -> url 쿼리 읽어오기 -> url 쿼리 기준으로 백엔드에 검색 조건과 함께 호출
@@ -90,13 +100,14 @@ const AdminProductPage = () => {
           data={productList}
           deleteItem={deleteItem}
           openEditForm={openEditForm}
+          searchQuery={searchQuery}
         />
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
           pageRangeDisplayed={5}
-          pageCount={100}
-          forcePage={searchQuery.page - 1}
+          pageCount={totalPageNum} // 전체 페이지
+          forcePage={searchQuery.page - 1} // 1페이지이면 2
           previousLabel="< previous"
           renderOnZeroPageCount={null}
           pageClassName="page-item"
@@ -118,6 +129,7 @@ const AdminProductPage = () => {
         mode={mode}
         showDialog={showDialog}
         setShowDialog={setShowDialog}
+        currentPage={searchQuery.page}
       />
     </div>
   );
