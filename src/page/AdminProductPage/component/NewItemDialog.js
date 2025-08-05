@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Form, Modal, Button, Row, Col, Alert } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CloudinaryUploadWidget from "../../../utils/CloudinaryUploadWidget";
@@ -7,7 +7,9 @@ import "../style/adminProduct.style.css";
 import {
   clearError,
   createProduct,
+  editProduct,
 } from "../../../features/product/productSlice";
+import { showToastMessage } from "../../../features/common/uiSlice";
 
 const InitialFormData = {
   name: "",
@@ -20,7 +22,7 @@ const InitialFormData = {
   price: 0,
 };
 
-const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
+const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
   const { error, success, selectedProduct } = useSelector(
     (state) => state.product
   );
@@ -31,37 +33,23 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const dispatch = useDispatch();
   const [stockError, setStockError] = useState(false);
 
-  useEffect(() => {
-    if (success) setShowDialog(false);
-  }, [success, setShowDialog]);
-
-  useEffect(() => {
-    if (error || !success) {
-      dispatch(clearError());
-    }
-    if (showDialog) {
-      if (mode === "edit") {
-        setFormData(selectedProduct);
-        // 객체형태로 온 stock을  다시 배열로 세팅해주기
-        const sizeArray = Object.keys(selectedProduct.stock).map((size) => [
-          size,
-          selectedProduct.stock[size],
-        ]);
-        setStock(sizeArray);
-      } else {
-        setFormData({ ...InitialFormData });
-        setStock([]);
-      }
-    }
-  }, [showDialog, dispatch, error, mode, selectedProduct, success]);
-
-  const handleClose = () => {
-    //모든걸 초기화시키고;
+  const handleClose = useCallback(() => {
+    // 모든걸 초기화시키고
+    setStockError(false);
+    dispatch(clearError());
     // 다이얼로그 닫아주기
-  };
+    setShowDialog(false);
+  }, [dispatch, setShowDialog]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (formData.price <= 0) {
+      return dispatch(
+        showToastMessage({ message: "가격을 입력해 주세요.", status: "error" })
+      );
+    }
+
     // 재고를 입력했는지 확인, 아니면 에러
     if (stock.length === 0) return setStockError(true);
     // 재고를 배열에서 객체로 바꿔주기
@@ -69,12 +57,20 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     const totalStock = stock.reduce((total, item) => {
       return { ...total, [item[0]]: parseInt(item[1]) };
     }, {});
-    console.log(totalStock);
+
     if (mode === "new") {
       // 새 상품 만들기
       dispatch(createProduct({ ...formData, stock: totalStock }));
     } else {
       // 상품 수정하기
+      dispatch(
+        editProduct({
+          ...formData,
+          stock: totalStock,
+          id: selectedProduct._id,
+          page: currentPage,
+        })
+      );
     }
   };
 
@@ -87,6 +83,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
   const addStock = () => {
     // 재고타입 추가시 배열에 새 배열 추가
     setStock((prev) => [...prev, []]);
+    setStockError(false);
   };
 
   const deleteStock = (idx) => {
@@ -132,6 +129,26 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
     // 이미지 업로드
     setFormData((prev) => ({ ...prev, image: url }));
   };
+
+  useEffect(() => {
+    if (success) {
+      handleClose();
+      return;
+    }
+
+    if (showDialog) {
+      if (mode === "edit") {
+        setFormData(selectedProduct);
+        const sizeArray = Object.keys(selectedProduct.stock || {}).map(
+          (size) => [size, selectedProduct.stock[size]]
+        );
+        setStock(sizeArray);
+      } else {
+        setFormData({ ...InitialFormData });
+        setStock([]);
+      }
+    }
+  }, [showDialog, dispatch, mode, selectedProduct, success, handleClose]);
 
   return (
     <Modal show={showDialog} onHide={handleClose}>
@@ -230,6 +247,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
                     placeholder="number of stock"
                     value={item[1]}
                     required
+                    min={0}
                   />
                 </Col>
                 <Col sm={2}>
@@ -267,6 +285,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog }) => {
               onChange={handleChange}
               type="number"
               placeholder="0"
+              min={0}
             />
           </Form.Group>
 
