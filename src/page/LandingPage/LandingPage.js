@@ -59,10 +59,10 @@ const LandingPage = () => {
           ))
         ) : (
           <div className="text-align-center empty-bag">
-            {name && name !== "" ? (
-              <h2>"{name}" 검색 결과가 없습니다.</h2>
-            ) : (
+            {name === null || name === "" ? (
               <h2>등록된 상품이 없습니다!</h2>
+            ) : (
+              <h2>"{name}" 검색 결과가 없습니다.</h2>
             )}
           </div>
         )}
