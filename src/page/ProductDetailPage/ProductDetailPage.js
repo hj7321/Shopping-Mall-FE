@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Row, Col, Button, Dropdown } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ColorRing } from "react-loader-spinner";
 import { currencyFormat } from "../../utils/number";
@@ -66,36 +66,23 @@ const ProductDetail = () => {
           </div>
           <div className="product-info">{selectedProduct.description}</div>
 
-          <Dropdown
-            className="drop-down size-drop-down"
-            title={size}
-            align="start"
-            onSelect={(value) => selectSize(value)}
+          <select
+            id="sizeSelect"
+            className={`form-select ${sizeError ? "is-invalid" : ""}`}
+            value={size}
+            onChange={(e) => selectSize(e.target.value)}
           >
-            <Dropdown.Toggle
-              className="size-drop-down"
-              variant={sizeError ? "outline-danger" : "outline-dark"}
-              id="dropdown-basic"
-              align="start"
-            >
-              {size === "" ? "사이즈 선택" : size.toUpperCase()}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu className="size-drop-down">
-              {Object.keys(selectedProduct.stock).length > 0 &&
-                Object.keys(selectedProduct.stock).map((item, index) =>
-                  selectedProduct.stock[item] > 0 ? (
-                    <Dropdown.Item eventKey={item} key={index}>
-                      {item.toUpperCase()}
-                    </Dropdown.Item>
-                  ) : (
-                    <Dropdown.Item eventKey={item} disabled={true} key={index}>
-                      {item.toUpperCase()}
-                    </Dropdown.Item>
-                  )
-                )}
-            </Dropdown.Menu>
-          </Dropdown>
+            <option value="">사이즈 선택</option>
+            {Object.keys(selectedProduct.stock).map((item, index) => (
+              <option
+                key={index}
+                value={item}
+                disabled={selectedProduct.stock[item] <= 0}
+              >
+                {item.toUpperCase()}
+              </option>
+            ))}
+          </select>
           <div className="warning-message">
             {sizeError && "사이즈를 선택해주세요."}
           </div>
