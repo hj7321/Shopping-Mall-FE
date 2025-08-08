@@ -1,15 +1,18 @@
 import { useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CartProductCard from "./component/CartProductCard";
 import OrderReceipt from "../PaymentPage/component/OrderReceipt";
 import "./style/cart.style.css";
+import { getCartList } from "../../features/cart/cartSlice";
 
 const CartPage = () => {
-  const { cartList } = useSelector((state) => state.cart);
+  const { cartList, totalPrice } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     //카트리스트 불러오기
+    dispatch(getCartList());
   }, []);
 
   return (
@@ -28,7 +31,7 @@ const CartPage = () => {
           )}
         </Col>
         <Col xs={12} md={5}>
-          <OrderReceipt />
+          <OrderReceipt cartList={cartList} totalPrice={totalPrice} />
         </Col>
       </Row>
     </Container>
