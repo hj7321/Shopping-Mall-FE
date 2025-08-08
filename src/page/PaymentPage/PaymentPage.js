@@ -19,7 +19,7 @@ const PaymentPage = () => {
     number: "",
   });
   const navigate = useNavigate();
-  const [firstLoading, setFirstLoading] = useState(true);
+  // const [firstLoading, setFirstLoading] = useState(true);
   const [shipInfo, setShipInfo] = useState({
     firstName: "",
     lastName: "",
