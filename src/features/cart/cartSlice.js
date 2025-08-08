@@ -26,10 +26,9 @@ export const addToCart = createAsyncThunk(
       );
       return response.data.cartItemQty;
     } catch (error) {
-      const serverMsg = error?.response?.data?.message;
       dispatch(
         showToastMessage({
-          message: serverMsg || "카트에 아이템이 추가되지 않았습니다.",
+          message: error.message || "카트에 아이템이 추가되지 않았습니다.",
           status: "error",
         })
       );
