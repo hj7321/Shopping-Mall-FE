@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Form, Modal, Button, Row, Col, Alert } from "react-bootstrap";
+import { Form, Modal, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import CloudinaryUploadWidget from "../../../utils/CloudinaryUploadWidget";
 import { CATEGORY, STATUS, SIZE } from "../../../constants/product.constants";
@@ -36,19 +36,12 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
   const handleClose = useCallback(() => {
     // 모든걸 초기화시키고
     setStockError(false);
-    dispatch(clearError());
     // 다이얼로그 닫아주기
     setShowDialog(false);
-  }, [dispatch, setShowDialog]);
+  }, [setShowDialog]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (formData.price <= 0) {
-      return dispatch(
-        showToastMessage({ message: "가격을 입력해 주세요.", status: "error" })
-      );
-    }
 
     // 재고를 입력했는지 확인, 아니면 에러
     if (stock.length === 0) return setStockError(true);
@@ -131,11 +124,18 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
   };
 
   useEffect(() => {
-    if (success) {
-      handleClose();
-      return;
+    if (error) {
+      dispatch(showToastMessage({ message: error, status: "error" }));
+      dispatch(clearError());
     }
 
+    if (success) {
+      handleClose();
+      dispatch(clearError());
+    }
+  }, [error, success, dispatch, handleClose]);
+
+  useEffect(() => {
     if (showDialog) {
       if (mode === "edit") {
         setFormData(selectedProduct);
@@ -148,8 +148,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
         setStock([]);
       }
     }
-  }, [showDialog, dispatch, mode, selectedProduct, success, handleClose]);
-
+  }, [showDialog, mode, selectedProduct]);
   return (
     <Modal show={showDialog} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -159,11 +158,6 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
           <Modal.Title>Edit Product</Modal.Title>
         )}
       </Modal.Header>
-      {error && (
-        <div className="error-message">
-          <Alert variant="danger">{error}</Alert>
-        </div>
-      )}
       <Form className="form-container" onSubmit={handleSubmit}>
         <Row className="mb-3">
           <Form.Group as={Col} controlId="sku">
