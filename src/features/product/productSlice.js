@@ -33,15 +33,6 @@ export const createProduct = createAsyncThunk(
   "products/createProduct",
   async (formData, { dispatch, rejectWithValue }) => {
     try {
-      if (formData.price === 0) {
-        dispatch(
-          showToastMessage({
-            message: "가격을 입력해 주세요.",
-            status: "error",
-          })
-        );
-        return rejectWithValue("가격을 입력해 주세요.");
-      }
       const response = await api.post("/product", formData);
       if (response.status !== 200) throw new Error(response.error);
       dispatch(
@@ -76,18 +67,7 @@ export const editProduct = createAsyncThunk(
   "products/editProduct",
   async ({ id, ...formData }, { dispatch, rejectWithValue }) => {
     try {
-      if (formData.price === 0) {
-        dispatch(
-          showToastMessage({
-            message: "가격을 입력해 주세요.",
-            status: "error",
-          })
-        );
-        return rejectWithValue("가격을 입력해 주세요.");
-      }
-
       const { page, ...dataToUpdate } = formData;
-
       const response = await api.put(`/product/${id}`, dataToUpdate);
       if (response.status !== 200) throw new Error(response.error);
       dispatch(
@@ -136,8 +116,8 @@ const productSlice = createSlice({
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
         state.success = false;
+        state.error = action.payload;
       })
       .addCase(getProductList.pending, (state) => {
         state.loading = true;
@@ -175,8 +155,8 @@ const productSlice = createSlice({
       })
       .addCase(editProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
         state.success = false;
+        state.error = action.payload;
       })
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
