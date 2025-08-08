@@ -6,7 +6,7 @@ import Sidebar from "../common/component/Sidebar";
 import Navbar from "../common/component/Navbar";
 import ToastMessage from "../common/component/ToastMessage";
 import { loginWithToken } from "../features/user/userSlice";
-import { getCartQty } from "../features/cart/cartSlice";
+import { getCartQty, initialCart } from "../features/cart/cartSlice";
 
 const AppLayout = ({ children }) => {
   const location = useLocation();
@@ -27,6 +27,8 @@ const AppLayout = ({ children }) => {
       if (location.pathname === "/login") {
         navigate("/");
       }
+    } else {
+      dispatch(initialCart());
     }
   }, [user, dispatch, location.pathname, navigate]);
   return (
