@@ -14,9 +14,7 @@ const Sidebar = () => {
   const NavbarContent = () => {
     return (
       <div>
-        <Link to="/">
-          <img width={100} src="/image/hm-logo.png" alt="hm-logo.png" />
-        </Link>
+        <Link to="/">Wearly</Link>
         <div className="sidebar-item">Admin Account</div>
         <ul className="sidebar-area">
           <li
