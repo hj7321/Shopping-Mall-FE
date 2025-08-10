@@ -1,6 +1,5 @@
-import React from "react";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import { Row, Col, Form } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch } from "react-redux";
 import { currencyFormat } from "../../../utils/number";
@@ -17,49 +16,53 @@ const CartProductCard = ({ item }) => {
   };
 
   return (
-    <div className="product-card-cart">
+    <div className="p-[10px] bg-[#eeeeee] mb-[10px] rounded-[6px]">
       <Row>
         <Col md={2} xs={12}>
-          <img src={item.productId.image} width={112} alt="product" />
+          <img
+            src={item.productId.image}
+            width={112}
+            alt="product"
+            className="rounded-[4px]"
+          />
         </Col>
         <Col md={10} xs={12}>
-          <div className="display-flex space-between">
-            <h3>{item.productId.name}</h3>
-            <button className="trash-button">
+          <div className="relative display-flex space-between">
+            <h3 className="font-suit-700 text-[24px]">{item.productId.name}</h3>
+            <button className="absolute right-[10px]">
               <FontAwesomeIcon
                 icon={faTrash}
-                width={24}
+                width={16}
                 onClick={() => deleteCart(item._id)}
               />
             </button>
           </div>
 
-          <div>
-            <strong>₩ {currencyFormat(item.productId.price)}</strong>
+          <div className="font-suit-400">
+            사이즈 :{" "}
+            <span className="font-suit-600">{item.size.toUpperCase()}</span>
           </div>
-          <div>Size: {item.size}</div>
-          <div>Total: ₩ {currencyFormat(item.productId.price * item.qty)}</div>
-          <div>
-            Quantity:
-            <Form.Select
-              onChange={(event) =>
-                handleQtyChange(item._id, event.target.value)
+          <div className="font-suit-400">
+            가격 :{" "}
+            <span className="font-suit-600">
+              {currencyFormat(item.productId.price * item.qty)}원
+            </span>
+          </div>
+          <div className="font-suit-400 flex items-center gap-2 text-black">
+            <span>수량:</span>
+            <select
+              value={item.qty ?? 1}
+              onChange={(e) =>
+                handleQtyChange(item._id, Number(e.target.value))
               }
-              required
-              defaultValue={item.qty}
-              className="qty-dropdown"
+              className="inline-block border rounded bg-white h-[24px] text-[12px] leading-[1] py-[2px] pr-[18px] pl-[6px] w-[80px] align-middle"
             >
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={3}>3</option>
-              <option value={4}>4</option>
-              <option value={5}>5</option>
-              <option value={6}>6</option>
-              <option value={7}>7</option>
-              <option value={8}>8</option>
-              <option value={9}>9</option>
-              <option value={10}>10</option>
-            </Form.Select>
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
           </div>
         </Col>
       </Row>
