@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router";
 import { currencyFormat } from "../../../utils/number";
-import { Button } from "react-bootstrap";
 
 const OrderReceipt = ({ cartList, totalPrice }) => {
   const location = useLocation();
@@ -14,32 +13,31 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
           cartList.map((item, index) => (
             <li key={`${item.productId} ${index}`}>
               <div className="display-flex space-between">
-                <div>{item.productId.name}</div>
+                <div className="">{item.productId.name}</div>
 
-                <div>₩ {currencyFormat(item.productId.price * item.qty)}</div>
+                <div>{currencyFormat(item.productId.price * item.qty)}원</div>
               </div>
             </li>
           ))}
       </ul>
       <div className="display-flex space-between receipt-title">
         <div>
-          <strong>Total:</strong>
+          <strong>총 합계 :</strong>
         </div>
         <div>
-          <strong>₩ {currencyFormat(totalPrice)}</strong>
+          <strong>{currencyFormat(totalPrice)}원</strong>
         </div>
       </div>
       {location.pathname.includes("/cart") && cartList.length > 0 && (
-        <Button
-          variant="dark"
-          className="payment-button"
+        <button
+          className="w-full bg-[#484848] hover:bg-black text-white py-[8px] rounded-[4px]"
           onClick={() => navigate("/payment")}
         >
           결제 계속하기
-        </Button>
+        </button>
       )}
 
-      <div>
+      <div className="mt-[10px] text-[10px] md:text-[12px]">
         가능한 결제 수단 귀하가 결제 단계에 도달할 때까지 가격 및 배송료는
         확인되지 않습니다.
         <div>
