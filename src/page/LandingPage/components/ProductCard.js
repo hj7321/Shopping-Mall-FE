@@ -7,10 +7,19 @@ const ProductCard = ({ item }) => {
     navigate(`/product/${id}`);
   };
   return (
-    <div className="card" onClick={() => showProduct(item._id)}>
-      <img src={item?.image} alt="" />
-      <div>{item?.name}</div>
-      <div>₩ {currencyFormat(item?.price)}</div>
+    <div
+      className="w-[310px] h-[470px] hover:cursor-pointer hover:scale-105 transform transition-all duration-300 ease-in-out"
+      onClick={() => showProduct(item._id)}
+    >
+      <img
+        src={item?.image}
+        alt=""
+        className="w-[310px] h-[420px] object-cover rounded-[10px]"
+      />
+      <div className="font-suit-700">{item?.name}</div>
+      <div className="font-suit-400 text-[#6e6e6e]">
+        {currencyFormat(item?.price)}원
+      </div>
     </div>
   );
 };
