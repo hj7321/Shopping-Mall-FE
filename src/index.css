@@ -1,13 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Thin 100 */
+@font-face {
+  font-family: "SUIT-Thin";
+  src: url("./assets/fonts/SUIT-Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraLight 200 */
+@font-face {
+  font-family: "SUIT-ExtraLight";
+  src: url("./assets/fonts/SUIT-ExtraLight.ttf") format("truetype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Light 300 */
+@font-face {
+  font-family: "SUIT-Light";
+  src: url("./assets/fonts/SUIT-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Regular 400 */
+@font-face {
+  font-family: "SUIT-Regular";
+  src: url("./assets/fonts/SUIT-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Medium 500 */
+@font-face {
+  font-family: "SUIT-Medium";
+  src: url("./assets/fonts/SUIT-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* SemiBold 600 */
+@font-face {
+  font-family: "SUIT-SemiBold";
+  src: url("./assets/fonts/SUIT-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Bold 700 */
+@font-face {
+  font-family: "SUIT-Bold";
+  src: url("./assets/fonts/SUIT-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ExtraBold 800 */
+@font-face {
+  font-family: "SUIT-ExtraBold";
+  src: url("./assets/fonts/SUIT-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Heavy(Black) 900 */
+@font-face {
+  font-family: "SUIT-Heavy";
+  src: url("./assets/fonts/SUIT-Heavy.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  body {
+    font-family: "SUIT-Medium", sans-serif;
+  }
+}
+
+#root {
+  font-family: "SUIT-Medium", sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
