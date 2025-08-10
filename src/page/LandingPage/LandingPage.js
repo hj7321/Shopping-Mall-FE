@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import ProductCard from "./components/ProductCard";
-import { Row, Col, Container } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductList } from "../../features/product/productSlice";
@@ -50,46 +50,52 @@ const LandingPage = () => {
 
   return (
     <Container>
-      <Row>
-        {productList.length > 0 ? (
-          productList.map((item) => (
-            <Col md={3} sm={12} key={item._id}>
-              <ProductCard item={item} />
-            </Col>
-          ))
-        ) : (
-          <div className="text-align-center empty-bag">
-            {name === null || name === "" ? (
-              <h2>등록된 상품이 없습니다!</h2>
-            ) : (
-              <h2>"{name}" 검색 결과가 없습니다.</h2>
-            )}
-          </div>
+      <div
+        className="w-full mx-auto
+                  max-w-[310px]      
+                  sm:max-w-[638.1px] 
+                  lg:max-w-[966.2px] 
+                  xl:max-w-[1294.3px] mb-[50px]"
+      >
+        <div className="flex flex-wrap justify-start gap-[18.1px]">
+          {productList.length > 0 ? (
+            productList.map((item) => (
+              <ProductCard key={item._id} item={item} />
+            ))
+          ) : (
+            <div className="text-align-center empty-bag">
+              {name === null || name === "" ? (
+                <h2>등록된 상품이 없습니다!</h2>
+              ) : (
+                <h2>"{name}" 검색 결과가 없습니다.</h2>
+              )}
+            </div>
+          )}
+        </div>
+        {totalPageNum > 1 && ( // 페이지가 1개 초과일 때만 페이지네이션 표시
+          <ReactPaginate
+            nextLabel="next >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={totalPageNum}
+            forcePage={page - 1}
+            previousLabel="< previous"
+            renderOnZeroPageCount={null}
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            breakLabel="..."
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            activeClassName="active"
+            className="display-center list-style-none"
+          />
         )}
-      </Row>
-      {totalPageNum > 1 && ( // 페이지가 1개 초과일 때만 페이지네이션 표시
-        <ReactPaginate
-          nextLabel="next >"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={totalPageNum}
-          forcePage={page - 1}
-          previousLabel="< previous"
-          renderOnZeroPageCount={null}
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
-          className="display-center list-style-none"
-        />
-      )}
+      </div>
     </Container>
   );
 };
