@@ -123,7 +123,7 @@ const Login = () => {
               <GoogleLogin
                 onSuccess={handleGoogleLogin}
                 onError={() => {
-                  console.log("Login Failed");
+                  console.error("Login Failed");
                 }}
               />
             </div>
