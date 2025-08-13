@@ -1,14 +1,12 @@
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import { currencyFormat } from "../../../utils/number";
+import { useSearchParams } from "react-router-dom";
 
-const ProductTable = ({
-  header,
-  data,
-  deleteItem,
-  openEditForm,
-  searchQuery,
-}) => {
+const ProductTable = ({ header, data, deleteItem, openEditForm }) => {
+  const [query] = useSearchParams();
+  const searchQueryName = query.get("name") || "";
+
   return (
     <div className="overflow-x">
       <Table striped bordered hover>
@@ -56,7 +54,7 @@ const ProductTable = ({
           ) : (
             <tr>
               <td colSpan={header.length} className="text-center">
-                {searchQuery.name !== ""
+                {searchQueryName !== ""
                   ? "검색 결과가 없습니다."
                   : "데이터가 존재하지 않습니다."}
               </td>
