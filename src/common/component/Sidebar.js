@@ -14,22 +14,31 @@ const Sidebar = () => {
   const NavbarContent = () => {
     return (
       <div>
-        <Link to="/">Wearly</Link>
-        <div className="sidebar-item">Admin Account</div>
-        <ul className="sidebar-area">
-          <li
-            className="sidebar-item"
-            onClick={() => handleSelectMenu("/admin/product?page=1")}
-          >
-            product
-          </li>
-          <li
-            className="sidebar-item"
-            onClick={() => handleSelectMenu("/admin/order?page=1")}
-          >
-            order
-          </li>
-        </ul>
+        <Link
+          to="/"
+          className="z-[5000] absolute top-[0px] no-underline text-inherit hover:text-inherit font-suit-800 text-[40px] md:text-[50px]"
+        >
+          Wearly
+        </Link>
+        <section className="mt-[60px]">
+          <div className="font-suit-700 py-[20px] px-[10px] hover:cursor-pointer hover:bg-main/40">
+            Admin Account
+          </div>
+          <ul className="pl-[0px]">
+            <li
+              className="font-suit-700 py-[20px] px-[10px] hover:cursor-pointer hover:bg-main/40"
+              onClick={() => handleSelectMenu("/admin/product?page=1")}
+            >
+              product
+            </li>
+            <li
+              className="font-suit-700 py-[20px] px-[10px] hover:cursor-pointer hover:bg-main/40"
+              onClick={() => handleSelectMenu("/admin/order?page=1")}
+            >
+              order
+            </li>
+          </ul>
+        </section>
       </div>
     );
   };
