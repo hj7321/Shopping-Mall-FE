@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
@@ -17,10 +17,6 @@ const AdminOrderPage = () => {
   const [query] = useSearchParams();
   const dispatch = useDispatch();
   const { orderList, totalPageNum } = useSelector((state) => state.order);
-  const [searchQuery, setSearchQuery] = useState({
-    page: query.get("page") || 1,
-    ordernum: query.get("ordernum") || "",
-  });
   const [open, setOpen] = useState(false);
 
   const tableHeader = [
@@ -34,41 +30,35 @@ const AdminOrderPage = () => {
     "Status",
   ];
 
-  useEffect(() => {
-    dispatch(getOrderList({ ...searchQuery }));
-  }, [query, dispatch, searchQuery]);
-
-  useEffect(() => {
-    if (searchQuery.ordernum === "") {
-      delete searchQuery.ordernum;
-    }
-    const params = new URLSearchParams(searchQuery);
-    const queryString = params.toString();
-
-    navigate("?" + queryString);
-  }, [searchQuery, navigate]);
-
   const openEditForm = (order) => {
     setOpen(true);
     dispatch(setSelectedOrder(order));
   };
 
   const handlePageClick = ({ selected }) => {
-    setSearchQuery({ ...searchQuery, page: selected + 1 });
+    const newQuery = new URLSearchParams();
+    newQuery.set("page", selected + 1);
+    navigate(`?${newQuery.toString()}`);
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const page = query.get("page") || 1;
+    const ordernum = query.get("ordernum") || "";
+    dispatch(getOrderList({ query: { page, ordernum }, isAdmin: true }));
+  }, [query, dispatch]);
+
   return (
     <div className="locate-center">
       <Container>
         <div className="mt-2 display-center mb-2">
           <SearchBox
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            placeholder="오더번호"
+            query={query}
+            navigate={navigate}
+            placeholder="주문 번호"
             field="ordernum"
           />
         </div>
@@ -83,7 +73,7 @@ const AdminOrderPage = () => {
           onPageChange={handlePageClick}
           pageRangeDisplayed={5}
           pageCount={totalPageNum}
-          forcePage={searchQuery.page - 1}
+          forcePage={Number(query.get("page") || 1) - 1}
           previousLabel="< previous"
           renderOnZeroPageCount={null}
           pageClassName="page-item"
