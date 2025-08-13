@@ -1,23 +1,22 @@
-import React from "react";
 import { Table, Badge } from "react-bootstrap";
 import { badgeBg } from "../../../constants/order.constants";
 import { currencyFormat } from "../../../utils/number";
 
-const OrderTable = ({ header, data, openEditForm }) => {
+const OrderTable = ({ header, data = [], openEditForm }) => {
   return (
     <div className="overflow-x">
       <Table striped bordered hover>
         <thead>
           <tr>
             {header.map((title) => (
-              <th>{title}</th>
+              <th key={title}>{title}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.length > 0 ? (
             data.map((item, index) => (
-              <tr onClick={() => openEditForm(item)}>
+              <tr key={item._id} onClick={() => openEditForm(item)}>
                 <th>{index}</th>
                 <th>{item.orderNum}</th>
                 <th>{item.createdAt.slice(0, 10)}</th>
@@ -40,7 +39,9 @@ const OrderTable = ({ header, data, openEditForm }) => {
               </tr>
             ))
           ) : (
-            <tr>No Data to show</tr>
+            <tr>
+              <td colSpan={header.length}>No Data to show</td>
+            </tr>
           )}
         </tbody>
       </Table>
