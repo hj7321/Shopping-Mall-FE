@@ -1,16 +1,15 @@
-import React from "react";
 import { useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import OrderStatusCard from "./component/OrderStatusCard";
 import "./style/orderStatus.style.css";
-import { getOrder } from "../../features/order/orderSlice";
+import { getOrderList } from "../../features/order/orderSlice";
 
 const MyPage = () => {
   const dispatch = useDispatch();
   const { orderList } = useSelector((state) => state.order);
   useEffect(() => {
-    dispatch(getOrder());
+    dispatch(getOrderList({}));
   }, [dispatch]);
 
   if (orderList?.length === 0) {
