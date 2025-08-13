@@ -19,11 +19,6 @@ const AdminProductPage = () => {
   const productList = useSelector((state) => state.product.productList);
   const totalPageNum = useSelector((state) => state.product.totalPageNum);
   const [showDialog, setShowDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState({
-    page: query.get("page") || 1,
-    name: query.get("name") || "",
-  }); // 검색 조건들을 저장하는 객체
-
   const [mode, setMode] = useState("new");
 
   const tableHeader = [
@@ -40,7 +35,8 @@ const AdminProductPage = () => {
   const deleteItem = (id) => {
     // 아이템 삭제하기
     dispatch(deleteProduct(id));
-    setSearchQuery({ page: 1, name: "" });
+    const currentQuery = new URLSearchParams(query);
+    navigate(`?${currentQuery.toString()}`);
   };
 
   const openEditForm = (product) => {
@@ -60,33 +56,29 @@ const AdminProductPage = () => {
 
   const handlePageClick = ({ selected }) => {
     //  쿼리에 페이지값 바꿔주기
-    setSearchQuery((prev) => ({ ...prev, page: selected + 1 }));
+    const currentName = query.get("name") || "";
+    const newQuery = new URLSearchParams();
+    if (currentName) {
+      newQuery.set("name", currentName);
+    }
+    newQuery.set("page", selected + 1);
+    navigate(`?${newQuery.toString()}`);
   };
 
   // 상품리스트 가져오기 (url쿼리 맞춰서)
   useEffect(() => {
-    dispatch(getProductList({ ...searchQuery }));
-  }, [query, dispatch, searchQuery]);
+    const page = query.get("page") || 1;
+    const name = query.get("name") || "";
+    dispatch(getProductList({ page, name }));
+  }, [query, dispatch]);
 
-  useEffect(() => {
-    // 검색어나 페이지가 바뀌면 url바꿔주기 (검색어또는 페이지가 바뀜 => url 바꿔줌=> url쿼리 읽어옴=> 이 쿼리값 맞춰서 상품리스트 가져오기)
-    if (searchQuery.name === "") {
-      delete searchQuery.name;
-    }
-    const params = new URLSearchParams(searchQuery);
-    const query = params.toString();
-    navigate("?" + query);
-  }, [searchQuery, navigate]);
-
-  // SearchBox에서 검색어 읽어오기 -> 엔터를 치면, searchQuery 객체가 업데이트됨: { name: 스트레이트 팬츠 }
-  // searchQuery 객체 안 아이템 기준으로 url을 새로 생성해서 호출: &name=스트레이트+팬츠 -> url 쿼리 읽어오기 -> url 쿼리 기준으로 백엔드에 검색 조건과 함께 호출
   return (
     <div className="locate-center">
       <Container>
         <div className="mt-2">
           <SearchBox
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+            query={query}
+            navigate={navigate}
             placeholder="제품 이름으로 검색"
             field="name"
           />
@@ -100,14 +92,13 @@ const AdminProductPage = () => {
           data={productList}
           deleteItem={deleteItem}
           openEditForm={openEditForm}
-          searchQuery={searchQuery}
         />
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}
           pageRangeDisplayed={5}
           pageCount={totalPageNum} // 전체 페이지
-          forcePage={searchQuery.page - 1} // 1페이지이면 2
+          forcePage={Number(query.get("page")) - 1 || 0} // 1페이지이면 2
           previousLabel="< previous"
           renderOnZeroPageCount={null}
           pageClassName="page-item"
@@ -129,7 +120,7 @@ const AdminProductPage = () => {
         mode={mode}
         showDialog={showDialog}
         setShowDialog={setShowDialog}
-        currentPage={searchQuery.page}
+        currentPage={Number(query.get("page")) || 1}
       />
     </div>
   );
