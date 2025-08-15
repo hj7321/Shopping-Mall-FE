@@ -1,9 +1,16 @@
 import { useLocation, useNavigate } from "react-router";
 import { currencyFormat } from "../../../utils/number";
+import { useDispatch } from "react-redux";
+import { checkStockBeforePayment } from "../../../features/order/orderSlice";
 
 const OrderReceipt = ({ cartList, totalPrice }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleProceedToPayment = () => {
+    dispatch(checkStockBeforePayment({ cartList, navigate }));
+  };
 
   return (
     <div className="receipt-container">
@@ -31,7 +38,7 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
       {location.pathname.includes("/cart") && cartList.length > 0 && (
         <button
           className="w-full bg-[#484848] hover:bg-black text-white py-[8px] rounded-[4px]"
-          onClick={() => navigate("/payment")}
+          onClick={handleProceedToPayment}
         >
           결제 계속하기
         </button>
