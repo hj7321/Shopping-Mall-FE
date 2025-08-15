@@ -14,6 +14,27 @@ const initialState = {
 };
 
 // Async thunks
+export const checkStockBeforePayment = createAsyncThunk(
+  "order/checkStockBeforePayment",
+  async (payload, { dispatch, rejectWithValue }) => {
+    try {
+      const { cartList, navigate } = payload;
+      const response = await api.post("/cart/checkStock", {
+        items: cartList.map((item) => ({
+          productId: item.productId._id,
+          qty: item.qty,
+          size: item.size,
+        })),
+      });
+      if (response.status === 200) navigate("/payment");
+      return response.data;
+    } catch (error) {
+      dispatch(showToastMessage({ message: error.message, status: "error" }));
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const createOrder = createAsyncThunk(
   "order/createOrder",
   async (payload, { dispatch, rejectWithValue }) => {
@@ -86,6 +107,18 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(checkStockBeforePayment.pending, (state) => {
+        state.loading = true;
+        state.error = "";
+      })
+      .addCase(checkStockBeforePayment.fulfilled, (state) => {
+        state.loading = false;
+        state.error = "";
+      })
+      .addCase(checkStockBeforePayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
       })
