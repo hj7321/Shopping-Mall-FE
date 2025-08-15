@@ -106,3 +106,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.Toastify__toast-body {
+  font-family: "SUIT-Medium", sans-serif !important;
+}
