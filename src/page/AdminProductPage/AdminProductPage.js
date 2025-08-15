@@ -101,17 +101,17 @@ const AdminProductPage = () => {
           forcePage={Number(query.get("page")) - 1 || 0} // 1페이지이면 2
           previousLabel="< previous"
           renderOnZeroPageCount={null}
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
+          pageClassName="rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+          pageLinkClassName="px-[16px] py-[8px] block text-gray-700 font-suit-600 no-underline"
+          previousClassName=""
+          previousLinkClassName="px-[16px] py-[8px] block text-gray-700 font-suit-600 no-underline"
+          nextClassName=""
+          nextLinkClassName="px-[16px] py-[8px] block text-gray-700 font-suit-600 no-underline"
           breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
+          breakClassName="text-gray-500 font-suit-600"
+          breakLinkClassName="px-[16px] py-[8px] block text-gray-700 font-suit-600 no-underline"
+          containerClassName="flex justify-center items-center mt-4 mb-4 gap-x-2"
+          activeClassName="bg-yellow-200 border-yellow-200 text-white hover:bg-yellow-400"
           className="display-center list-style-none"
         />
       </Container>
