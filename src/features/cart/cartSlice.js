@@ -9,6 +9,7 @@ const initialState = {
   selectedItem: {},
   cartItemCount: 0,
   totalPrice: 0,
+  selectedCartItems: [],
 };
 
 // Async thunk actions
@@ -73,14 +74,22 @@ export const deleteCartItem = createAsyncThunk(
   }
 );
 
-export const updateQty = createAsyncThunk(
+export const updateCart = createAsyncThunk(
   "cart/updateQty",
-  async ({ id, value }, { rejectWithValue, dispatch }) => {
+  async ({ id, qty, size, oldQty, oldSize }, { rejectWithValue, dispatch }) => {
     try {
-      const response = await api.put("/cart", { id, value });
+      const response = await api.put("/cart", { id, qty, size });
+
+      let message = "";
+      if (oldQty !== qty && oldQty !== undefined) {
+        message = `상품 수량 변경 성공: ${oldQty} → ${qty}`;
+      } else if (oldSize !== size) {
+        message = `상품 사이즈 변경 성공: ${oldSize.toUpperCase()} → ${size.toUpperCase()}`;
+      }
+
       dispatch(
         showToastMessage({
-          message: "상품 수량이 변경되었습니다",
+          message,
           status: "success",
         })
       );
@@ -115,10 +124,26 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // 체크박스 클릭 시 호출될 액션
+    toggleCartItem: (state, action) => {
+      const { itemId } = action.payload;
+      const index = state.selectedCartItems.indexOf(itemId);
+      // 이미 선택된 아이템이면 배열에서 제거
+      if (index > -1) state.selectedCartItems.splice(index, 1);
+      // 선택되지 않은 아이템이면 배열에 추가
+      else state.selectedCartItems.push(itemId);
+    },
+    // 전체 선택/해제 토글 액션
+    toggleAllItems: (state, action) => {
+      const { checked } = action.payload;
+      if (checked)
+        state.selectedCartItems = state.cartList.map((item) => item._id);
+      else state.selectedCartItems = [];
+    },
     initialCart: (state) => {
       state.cartItemCount = 0;
+      state.selectedCartItems = [];
     },
-    // You can still add reducers here for non-async actions if necessary
   },
   extraReducers: (builder) => {
     builder
@@ -146,6 +171,8 @@ const cartSlice = createSlice({
           (total, item) => total + item.productId.price * item.qty,
           0
         );
+        // 장바구니 목록을 불러오면 전체 선택되도록 초기화
+        state.selectedCartItems = action.payload.map((item) => item._id);
       })
       .addCase(getCartList.rejected, (state, action) => {
         state.loading = false;
@@ -159,15 +186,19 @@ const cartSlice = createSlice({
         state.error = "";
         state.cartList = action.payload;
         state.cartItemCount = action.payload.length;
+        // 삭제된 아이템 ID를 selectedCartItems에서 제거
+        state.selectedCartItems = state.selectedCartItems.filter(
+          (id) => !action.meta.arg.includes(id)
+        );
       })
       .addCase(deleteCartItem.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateQty.pending, (state) => {
+      .addCase(updateCart.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateQty.fulfilled, (state, action) => {
+      .addCase(updateCart.fulfilled, (state, action) => {
         state.loading = false;
         state.error = "";
         state.cartList = action.payload;
@@ -176,7 +207,7 @@ const cartSlice = createSlice({
           0
         );
       })
-      .addCase(updateQty.rejected, (state, action) => {
+      .addCase(updateCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -193,4 +224,5 @@ const cartSlice = createSlice({
 });
 
 export default cartSlice.reducer;
-export const { initialCart } = cartSlice.actions;
+export const { initialCart, toggleCartItem, toggleAllItems } =
+  cartSlice.actions;
