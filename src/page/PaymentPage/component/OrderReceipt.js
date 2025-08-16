@@ -9,6 +9,10 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
   const dispatch = useDispatch();
 
   const handleProceedToPayment = () => {
+    if (cartList.length === 0) {
+      alert("결제할 상품을 선택해주세요.");
+      return;
+    }
     dispatch(checkStockBeforePayment({ cartList, navigate }));
   };
 
@@ -20,7 +24,9 @@ const OrderReceipt = ({ cartList, totalPrice }) => {
           cartList.map((item, index) => (
             <li key={`${item.productId} ${index}`}>
               <div className="display-flex space-between">
-                <div className="">{item.productId.name}</div>
+                <div className="">
+                  {item.productId.name} ({item.size})
+                </div>
 
                 <div>{currencyFormat(item.productId.price * item.qty)}원</div>
               </div>
