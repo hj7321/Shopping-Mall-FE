@@ -14,8 +14,10 @@ const LandingPage = () => {
   const productList = useSelector((state) => state.product.productList);
   const totalPageNum = useSelector((state) => state.product.totalPageNum);
   const loading = useSelector((state) => state.product.loading);
+
   const name = query.get("name");
   const page = query.get("page") || 1;
+  const category = query.get("category");
 
   const handlePageClick = ({ selected }) => {
     const params = new URLSearchParams(query);
@@ -28,9 +30,10 @@ const LandingPage = () => {
       getProductList({
         name,
         page,
+        category,
       })
     );
-  }, [query, dispatch, name, page]);
+  }, [query, dispatch, name, page, category]);
 
   if (loading) {
     return (
