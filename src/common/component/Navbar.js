@@ -7,27 +7,19 @@ import {
   faSearch,
   faShoppingBag,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/user/userSlice";
 import clsx from "clsx";
+import { CATEGORY } from "../../constants/product.constants";
 
 const Navbar = () => {
+  const [query] = useSearchParams();
+  const currentCategory = query.get("category") || "ALL";
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const { cartItemCount } = useSelector((state) => state.cart);
-
-  const menuList = [
-    "여성",
-    "Divided",
-    "남성",
-    "신생아/유아",
-    "아동",
-    "H&M HOME",
-    "Sale",
-    "지속가능성",
-  ];
 
   // 드로어 & 검색
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,26 +27,38 @@ const Navbar = () => {
   const [keyword, setKeyword] = useState("");
   const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (searchOpen) setTimeout(() => inputRef.current?.focus(), 0);
-  }, [searchOpen]);
+  const handleCategoryClick = (category) => {
+    const params = new URLSearchParams(query);
+    if (category === "ALL") params.delete("category");
+    else params.set("category", category);
+    params.set("page", 1);
+    navigate(`/?${params.toString().toLowerCase()}`);
+    setMenuOpen(false);
+  };
 
   const submitSearch = () => {
     const q = keyword.trim();
     navigate(q ? `?name=${q}` : "/");
     setSearchOpen(false);
   };
+
   const onKeyDownMobile = (e) => {
     if (e.key === "Enter") submitSearch();
     if (e.key === "Escape") setSearchOpen(false);
   };
+
   const onKeyDownDesktop = (e) => {
     if (e.key === "Enter") {
       const q = e.target.value.trim();
       navigate(q ? `?name=${q}` : "/");
     }
   };
+
   const handleLogout = () => dispatch(logout());
+
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => inputRef.current?.focus(), 0);
+  }, [searchOpen]);
 
   return (
     <div>
@@ -126,8 +130,28 @@ const Navbar = () => {
         <hr className="my-3 border-0 border-t-[0.5px] border-t-[#a6a6a6]" />
 
         <div className="px-4 flex flex-col gap-[16px]">
-          {menuList.map((menu, idx) => (
-            <button key={idx} className="text-left hover:font-suit-800">
+          <button
+            onClick={() => handleCategoryClick("ALL")}
+            className={clsx(
+              "text-left",
+              currentCategory === "ALL"
+                ? "font-suit-900"
+                : "hover:font-suit-800"
+            )}
+          >
+            ALL
+          </button>
+          {CATEGORY.map((menu) => (
+            <button
+              key={menu}
+              onClick={() => handleCategoryClick(menu)}
+              className={clsx(
+                "text-left",
+                currentCategory.toLowerCase() === menu.toLowerCase()
+                  ? "font-suit-900"
+                  : "hover:font-suit-800"
+              )}
+            >
               {menu}
             </button>
           ))}
@@ -236,9 +260,30 @@ const Navbar = () => {
       {/* === 하단 메뉴 + 데스크톱 검색 === */}
       <div className="nav-menu-area relative">
         <ul className="menu">
-          {menuList.map((menu, index) => (
-            <li key={index}>
-              <a href="/">{menu}</a>
+          <li>
+            <button
+              onClick={() => handleCategoryClick("ALL")}
+              className={clsx(
+                currentCategory === "ALL"
+                  ? "font-suit-900"
+                  : "hover:font-suit-800"
+              )}
+            >
+              ALL
+            </button>
+          </li>
+          {CATEGORY.map((menu) => (
+            <li key={menu}>
+              <button
+                onClick={() => handleCategoryClick(menu)}
+                className={clsx(
+                  currentCategory.toLowerCase() === menu.toLowerCase()
+                    ? "font-suit-900"
+                    : "hover:font-suit-800"
+                )}
+              >
+                {menu}
+              </button>
             </li>
           ))}
         </ul>
