@@ -150,7 +150,7 @@ const NewItemDialog = ({ mode, showDialog, setShowDialog, currentPage }) => {
     }
   }, [showDialog, mode, selectedProduct]);
   return (
-    <Modal show={showDialog} onHide={handleClose}>
+    <Modal show={showDialog} onHide={handleClose} className="font-suit-500">
       <Modal.Header closeButton>
         {mode === "new" ? (
           <Modal.Title>Create New Product</Modal.Title>
